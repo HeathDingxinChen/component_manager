@@ -3,9 +3,6 @@
 
 # 设置组件的版本和目录
 JAVA_VERSION="11"
-KAFKA_VERSION="3.6.0"
-ZOOKEEPER_VERSION="3.8.1"
-SCALA_VERSION="2.13"
 INSTALL_DIR="/usr/local"
 KAFKA_DIR="$INSTALL_DIR/kafka"
 ZOOKEEPER_DIR="$INSTALL_DIR/zookeeper"
@@ -116,49 +113,57 @@ function uninstall_jdk11() {
     fi
 }
 
-function install_kafka() {
-   echo "下载并安装 Kafka..."
-    wget -q https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -O kafka.tgz
+function install_zookeep() {
+    # 提示用户输入 Zookeeper 版本（默认 3.8.1）
+    echo "请输入要安装的 Zookeeper 版本（例如 3.8.1，默认 3.8.1）："
+    read ZOOKEEPER_VERSION
+    ZOOKEEPER_VERSION=${ZOOKEEPER_VERSION:-3.8.4}  # 如果没有输入，使用默认版本 3.8.1
+
+    echo "安装 Zookeeper ${ZOOKEEPER_VERSION}..."
+
+    # 下载 Zookeeper
+    wget -q https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -O zookeeper.tgz
 
     if [ $? -ne 0 ]; then
-        echo "下载 Kafka 失败！"
+        echo "下载 Zookeeper 失败！"
+        echo "请到 https://downloads.apache.org/zookeeper/ 检查版本！"
         exit 1
     fi
 
-    sudo mkdir -p $KAFKA_DIR
-    sudo tar -xvzf kafka.tgz -C $KAFKA_DIR --strip-components=1
+    # 安装 Zookeeper
+    sudo mkdir -p $ZOOKEEPER_DIR
+    sudo tar -xvzf zookeeper.tgz -C $ZOOKEEPER_DIR --strip-components=1
 
     if [ $? -ne 0 ]; then
-        echo "解压 Kafka 失败！"
+        echo "解压 Zookeeper 失败！"
         exit 1
     fi
 
-    rm kafka.tgz
+    rm zookeeper.tgz
 
-    echo "配置 Kafka..."
-    cat <<EOF | sudo tee $KAFKA_DIR/config/server.properties > /dev/null
-broker.id=0
-log.dirs=$KAFKA_DIR/logs
-zookeeper.connect=localhost:2181
-num.network.threads=3
-num.io.threads=8
-log.retention.hours=168
-log.segment.bytes=1073741824
-log.retention.check.interval.ms=300000
-zookeeper.connection.timeout.ms=6000
+    # 配置 Zookeeper
+    echo "配置 Zookeeper..."
+    sudo mkdir -p $ZOOKEEPER_DIR/data
+    cat <<EOF | sudo tee $ZOOKEEPER_DIR/conf/zoo.cfg > /dev/null
+tickTime=2000
+dataDir=$ZOOKEEPER_DIR/data
+clientPort=2181
+initLimit=5
+syncLimit=2
 EOF
 
     if [ $? -eq 0 ]; then
-        echo "Kafka 安装和配置完成！"
+        echo "Zookeeper 安装和配置完成！"
     else
-        echo "Kafka 配置失败！"
+        echo "Zookeeper 配置失败！"
         exit 1
     fi
 }
 
+
 # 卸载 Kafka
 function uninstall_kafka() {
-    echo "开始卸载 Kafka ${KAFKA_VERSION}..."
+    echo "开始卸载 Kafka ..."
 
     # 停止 Kafka
     pkill -f "kafka-server-start"
@@ -204,6 +209,7 @@ function install_zookeep() {
 
     if [ $? -ne 0 ]; then
         echo "下载 Zookeeper 失败！"
+        echo "请到 https://downloads.apache.org/zookeeper/ 检查版本！"
         exit 1
     fi
 
