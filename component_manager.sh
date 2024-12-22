@@ -90,7 +90,7 @@ function install_jdk11() {
 }
 
 function uninstall_jdk11() {
-  echo "开始卸载 OpenJDK ${JAVA_VERSION}..."
+    echo "开始卸载 OpenJDK ${JAVA_VERSION}..."
 
     # 卸载 JDK 包
     sudo apt remove --purge -y openjdk-${JAVA_VERSION}-jdk
@@ -320,7 +320,7 @@ function install_menu_loop() {
         install_menu
         read -r install_choice
         case $install_choice in
-        1) install_java ;;
+        1) install_jdk11 ;;
         2) uninstall_jdk11 ;;
         3) install_kafka ;;
         4) uninstall_kafka ;;
@@ -335,10 +335,11 @@ function install_menu_loop() {
 
 function config_menu_loop() {
     while true; do
-        install_menu
+        config_menu
         read -r config_choice
         case config_choice in
         1) disable_firewall ;;
+        8) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
     done
@@ -351,12 +352,12 @@ while true; do
     read -r choice
     case $choice in
     1) install_menu_loop ;;
-    2) start_zookeeper ;;
+    2) config_menu_loop ;;
     3) start_kafka ;;
-    4) stop_zookeeper ;;
-    5) stop_kafka ;;
-    6) status ;;
-    7) uninstall_components ;;
+    4) start_zookeeper ;;
+    5) stop_zookeeper ;;
+    6) stop_kafka ;;
+    7) status ;;
     8) exit 0 ;;
     *) echo "无效选项，请重试！" ;;
     esac
