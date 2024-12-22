@@ -32,6 +32,8 @@ function config_menu() {
     echo "配置环境脚本"
     echo "=========================="
     echo "1. 关闭防火墙"
+    echo "2. 更新包管理器"
+    echo "3. 安装iptables"
     echo "9. 返回上一级菜单"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
@@ -655,6 +657,19 @@ function unregister_kafka_service() {
     echo "Kafka 服务已成功卸载！"
 }
 
+function apt_update() {
+    echo "更新包管理器..."
+    sudo apt update
+    echo "更新包管理器完毕！"
+}
+
+function install_iptables() {
+    echo "更新包管理器..."
+    sudo apt install iptables -y
+    echo "更新包管理器完毕！"
+}
+
+
 
 function enable_kafka_service() {
     echo "启动 Kafka 服务..."
@@ -788,9 +803,9 @@ function manager_docker_menu_loop() {
         manager_menu
         read -r manager_zookeeper_menu_choice
         case $manager_zookeeper_menu_choice in
-        1) install_zookeeper ;;
-        2) uninstall_zookeeper ;;
-        3) check_zookeeper_installed ;;
+        1) install_docker ;;
+        2) uninstall_docker ;;
+        3) check_docker_installed ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
@@ -805,6 +820,8 @@ function config_menu_loop() {
         read -r config_choice
         case config_choice in
         1) disable_firewall ;;
+        2) apt_update ;;
+        3) install_iptables ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
