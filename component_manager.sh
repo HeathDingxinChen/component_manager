@@ -12,9 +12,9 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 # 打印菜单
 function menu() {
     echo "=========================="
-    echo "组件管理脚本"
+    echo "组件管理脚本 v1.0"
     echo "=========================="
-    echo "1. 安装\配置组件"
+    echo "1. 管理组件"
     echo "2. 配置环境"
     echo "3. 启动 Zookeeper 默认端口: 2182"
     echo "4. 启动 Kafka 默认端口: 9092"
@@ -23,8 +23,22 @@ function menu() {
     echo "7. 查看服务状态"
     echo "8. 退出"
     echo "=========================="
-    echo -n "请输入选项 [1-8]: "
+    echo -n "请输入选项 [1-9]: "
 }
+
+
+function manager_jdk_menu() {
+    echo "=========================="
+    echo "管理JDK"
+    echo "=========================="
+    echo "1. 安装Java Open JDK version"
+    echo "2. 卸载Java"
+    echo "2. 卸载Java"
+    echo "9. 返回上一级菜单"
+    echo "=========================="
+    echo -n "请输入选项 [1-9]: "
+}
+
 
 
 function config_menu() {
@@ -32,23 +46,21 @@ function config_menu() {
     echo "配置环境脚本"
     echo "=========================="
     echo "1. 关闭防火墙"
+    echo "9. 返回上一级菜单"
     echo "=========================="
-    echo -n "请输入选项 [1-8]: "
+    echo -n "请输入选项 [1-9]: "
 }
 
-function install_menu() {
+function manager_menu() {
     echo "=========================="
-    echo "组件安装脚本"
+    echo "管理脚本"
     echo "=========================="
-    echo "1. 安装Java Open JDK version: ${JAVA_VERSION}"
-    echo "2. 卸载Java"
-    echo "3. 安装Kafka version: ${KAFKA_VERSION}"
-    echo "4. 卸载Kafka"
-    echo "5. 安装Zookeeper version: ${ZOOKEEPER_VERSION}"
-    echo "6. 卸载Zookeeper"
-    echo "8. 退出"
+    echo "1. 管理JDK"
+    echo "2. 管理Kafka"
+    echo "3. 管理Zookeeper"
+    echo "9. 返回上一级菜单"
     echo "=========================="
-    echo -n "请输入选项 [1-8]: "
+    echo -n "请输入选项 [1-9]: "
 }
 
 # 安装jdk11
@@ -111,6 +123,37 @@ function uninstall_jdk11() {
     else
         echo "OpenJDK 卸载成功！"
     fi
+}
+
+function check_jdk_installed() {
+    echo "检查 JDK 安装状态..."
+
+    # 检查 java 是否存在
+    if command -v java &>/dev/null; then
+        echo "JDK 已安装：$(java -version 2>&1 | head -n 1)"
+    else
+        echo "JDK 未安装！"
+        return 1
+    fi
+
+    # 检查 JAVA_HOME 环境变量
+    if [ -d "$JAVA_HOME_PATH" ]; then
+        echo "JAVA_HOME 配置正确：$JAVA_HOME_PATH"
+    else
+        echo "JAVA_HOME 配置错误或未设置！"
+        return 1
+    fi
+
+    # 检查 java 命令是否能正确执行
+    if java -version &>/dev/null; then
+        echo "Java 配置成功！"
+    else
+        echo "Java 配置失败！"
+        return 1
+    fi
+
+    echo "JDK 安装和配置正常！"
+    return 0
 }
 
 function install_zookeep() {
@@ -198,7 +241,7 @@ function uninstall_kafka() {
 }
 
 
-function install_zookeep() {
+function install_zookeeper() {
    echo "下载并安装 Zookeeper..."
 
     # 设置 Zookeeper 版本
@@ -298,45 +341,125 @@ function disable_firewall() {
     echo "防火墙 已停止！"
 }
 
+function check_kafka_installed() {
+    echo "检查 Kafka 安装状态..."
 
-# 查看服务状态
-function status() {
-    echo "检查服务状态..."
-    if pgrep -f "zookeeper-server-start" >/dev/null; then
-        echo "Zookeeper 正在运行"
+    # 检查 Kafka 安装目录是否存在
+    if [ -d "$KAFKA_DIR" ]; then
+        echo "Kafka 安装目录已找到：$KAFKA_DIR"
     else
-        echo "Zookeeper 未运行"
+        echo "Kafka 未安装或安装目录不存在！"
+        return 1
     fi
+
+    # 检查 Kafka 配置文件是否存在
+    if [ -f "$KAFKA_DIR/config/server.properties" ]; then
+        echo "Kafka 配置文件已找到：$KAFKA_DIR/config/server.properties"
+    else
+        echo "Kafka 配置文件不存在！"
+        return 1
+    fi
+
+    # 检查 Kafka 服务是否正在运行
     if pgrep -f "kafka-server-start" >/dev/null; then
-        echo "Kafka 正在运行"
+        echo "Kafka 服务正在运行"
     else
-        echo "Kafka 未运行"
+        echo "Kafka 服务未运行"
+        return 1
     fi
+
+    echo "Kafka 安装和配置正常！"
+    return 0
 }
 
-# 卸载组件
-function uninstall_components() {
-    echo "卸载组件..."
-    sudo rm -rf $KAFKA_DIR $ZOOKEEPER_DIR
-    echo "卸载完成！"
+
+function check_zookeeper_installed() {
+    echo "检查 Zookeeper 安装状态..."
+
+    # 检查 Zookeeper 安装目录是否存在
+    if [ -d "$ZOOKEEPER_DIR" ]; then
+        echo "Zookeeper 安装目录已找到：$ZOOKEEPER_DIR"
+    else
+        echo "Zookeeper 未安装或安装目录不存在！"
+        return 1
+    fi
+
+    # 检查 Zookeeper 配置文件是否存在
+    if [ -f "$ZOOKEEPER_DIR/conf/zoo.cfg" ]; then
+        echo "Zookeeper 配置文件已找到：$ZOOKEEPER_DIR/conf/zoo.cfg"
+    else
+        echo "Zookeeper 配置文件不存在！"
+        return 1
+    fi
+
+    # 检查 Zookeeper 服务是否正在运行
+    if pgrep -f "zookeeper-server-start" >/dev/null; then
+        echo "Zookeeper 服务正在运行"
+    else
+        echo "Zookeeper 服务未运行"
+        return 1
+    fi
+
+    echo "Zookeeper 安装和配置正常！"
+    return 0
 }
 
-function install_menu_loop() {
+function manager_menu_loop() {
     while true; do
-        install_menu
-        read -r install_choice
-        case $install_choice in
-        1) install_jdk11 ;;
-        2) uninstall_jdk11 ;;
+        manager_menu
+        read -r manager_menu_choice
+        case $manager_menu_choice in
+        1) manager_jdk_menu_loop ;;
+        2) manager_kafka_menu_loop ;;
         3) install_kafka ;;
-        4) uninstall_kafka ;;
-        5) install_zookeep ;;
-        6) uninstall_zookeeper ;;
-        8) return ;;  # 返回主菜单
+        9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
     done
 }
+
+function manager_jdk_menu_loop() {
+    while true; do
+        manager_menu
+        read -r manager_jdk_menu_choice
+        case $manager_jdk_menu_choice in
+        1) install_jdk11 ;;
+        2) uninstall_jdk11 ;;
+        3) check_jdk_installed ;;
+        9) return ;;  # 返回主菜单
+        *) echo "无效选项，请重试！" ;;
+        esac
+    done
+}
+
+function manager_kafka_menu_loop() {
+    while true; do
+        manager_menu
+        read -r manager_kafka_menu_loop
+        case manager_kafka_menu_loop in
+        1) install_kafka ;;
+        2) uninstall_kafka ;;
+        3) check_kafka_installed ;;
+        9) return ;;  # 返回主菜单
+        *) echo "无效选项，请重试！" ;;
+        esac
+    done
+}
+
+function manager_zookeeper_menu_loop() {
+    while true; do
+        manager_menu
+        read -r manager_zookeeper_menu_choice
+        case $manager_zookeeper_menu_choice in
+        1) install_zookeeper ;;
+        2) uninstall_zookeeper ;;
+        3) check_zookeeper_installed ;;
+        9) return ;;  # 返回主菜单
+        *) echo "无效选项，请重试！" ;;
+        esac
+    done
+}
+
 
 
 function config_menu_loop() {
@@ -345,7 +468,7 @@ function config_menu_loop() {
         read -r config_choice
         case config_choice in
         1) disable_firewall ;;
-        8) return ;;  # 返回主菜单
+        9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
     done
@@ -357,7 +480,7 @@ while true; do
     menu
     read -r choice
     case $choice in
-    1) install_menu_loop ;;
+    1) manager_menu_loop ;;
     2) config_menu_loop ;;
     3) start_kafka ;;
     4) start_zookeeper ;;
