@@ -12,7 +12,7 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 # 打印菜单
 function main_menu() {
     echo "=========================="
-    echo "组件管理脚本 v1.12 By Heath"
+    echo "组件管理脚本"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -639,79 +639,26 @@ function apt_update_and_install_util() {
     sudo apt update
     echo "更新包管理器完毕！"
 
-    # 安装 iptables
-    read -p "是否安装 iptables (默认不安装, 输入 y 安装): " install_iptables
-    if [[ "$install_iptables" == "y" || "$install_iptables" == "Y" ]]; then
-        echo "安装iptables..."
-        sudo apt install iptables -y
-        echo "安装iptables完毕！"
-    else
-        echo "跳过安装iptables"
-    fi
+    # 定义安装包名的数组
+    local packages=("iptables" "net-tools" "curl" "wget" "vim" "telnet" "htop" "nmap")
 
-    # 安装 net-tools
-    read -p "是否安装 net-tools (默认不安装, 输入 y 安装): " install_net_tools
-    if [[ "$install_net_tools" == "y" || "$install_net_tools" == "Y" ]]; then
-        echo "安装net-tools..."
-        sudo apt install net-tools -y
-        echo "安装net-tools完毕！"
-    else
-        echo "跳过安装net-tools"
-    fi
-
-    # 安装 curl
-    read -p "是否安装 curl (默认不安装, 输入 y 安装): " install_curl
-    if [[ "$install_curl" == "y" || "$install_curl" == "Y" ]]; then
-        echo "安装curl..."
-        sudo apt install curl -y
-        echo "安装curl完毕！"
-    else
-        echo "跳过安装curl"
-    fi
-
-    # 安装 wget
-    read -p "是否安装 wget (默认不安装, 输入 y 安装): " install_wget
-    if [[ "$install_wget" == "y" || "$install_wget" == "Y" ]]; then
-        echo "安装wget..."
-        sudo apt install wget -y
-        echo "安装wget完毕！"
-    else
-        echo "跳过安装wget"
-    fi
-
-    # 安装 vim
-    read -p "是否安装 vim (默认不安装, 输入 y 安装): " install_vim
-    if [[ "$install_vim" == "y" || "$install_vim" == "Y" ]]; then
-        echo "安装vim..."
-        sudo apt install vim -y
-        echo "安装vim完毕！"
-    else
-        echo "跳过安装vim"
-    fi
-
-    # 安装 telnet
-    read -p "是否安装 telnet (默认不安装, 输入 y 安装): " install_telnet
-    if [[ "$install_telnet" == "y" || "$install_telnet" == "Y" ]]; then
-        echo "安装telnet..."
-        sudo apt install telnet -y
-        echo "安装telnet完毕！"
-    else
-        echo "跳过安装telnet"
-    fi
-
-    # 安装 htop
-    read -p "是否安装 htop (默认不安装, 输入 y 安装): " install_htop
-    if [[ "$install_htop" == "y" || "$install_htop" == "Y" ]]; then
-        echo "安装htop..."
-        sudo apt install htop -y
-    fi
-
-    # 安装 nmap
-    read -p "是否安装 nmap (默认不安装, 输入 y 安装): " install_htop
-    if [[ "$install_htop" == "y" || "$install_htop" == "Y" ]]; then
-        echo "安装htop..."
-        sudo apt install nmap -y
-    fi
+    # 循环遍历每个包，检查是否已安装并询问用户是否安装
+    for package in "${packages[@]}"; do
+        # 检查包是否已安装
+        if dpkg -l | grep -q "$package"; then
+            echo "$package 已安装，跳过安装。"
+        else
+            # 询问用户是否安装
+            read -p "是否安装 $package (默认不安装, 输入 y 安装): " install_package
+            if [[ "$install_package" == "y" || "$install_package" == "Y" ]]; then
+                echo "安装 $package..."
+                sudo apt install "$package" -y
+                echo "$package 安装完毕！"
+            else
+                echo "跳过安装 $package"
+            fi
+        fi
+    done
 }
 
 
@@ -866,7 +813,7 @@ function config_menu_loop() {
         read -r config_choice
         case config_choice in
         1) disable_firewall ;;
-        2) apt_update ;;
+        2) apt_update_and_install_util ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
