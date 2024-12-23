@@ -357,53 +357,6 @@ function uninstall_kafka() {
     echo "Kafka 卸载完成！"
 }
 
-
-function install_zookeeper() {
-   echo "下载并安装 Zookeeper..."
-
-    # 设置 Zookeeper 版本
-
-
-    # 下载 Zookeeper
-    wget https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -O zookeeper.tgz
-
-    if [ $? -ne 0 ]; then
-        echo "下载 Zookeeper 失败！"
-        echo "请到 https://downloads.apache.org/zookeeper/ 检查版本！"
-        exit 1
-    fi
-
-    # 解压 Zookeeper
-    sudo mkdir -p $ZOOKEEPER_DIR
-    sudo tar -xvzf zookeeper.tgz -C $ZOOKEEPER_DIR --strip-components=1
-
-    if [ $? -ne 0 ]; then
-        echo "解压 Zookeeper 失败！"
-        exit 1
-    fi
-
-    # 删除安装包
-    rm zookeeper.tgz
-
-    # 配置 Zookeeper
-    echo "配置 Zookeeper..."
-    sudo mkdir -p $ZOOKEEPER_DIR/data
-    cat <<EOF | sudo tee $ZOOKEEPER_DIR/conf/zoo.cfg > /dev/null
-tickTime=2000
-dataDir=$ZOOKEEPER_DIR/data
-clientPort=2181
-initLimit=5
-syncLimit=2
-EOF
-
-    if [ $? -eq 0 ]; then
-        echo "Zookeeper 安装和配置完成！"
-    else
-        echo "Zookeeper 配置失败！"
-        exit 1
-    fi
-}
-
 # 卸载 Zookeeper
 function uninstall_zookeeper() {
     echo "卸载 Zookeeper..."
