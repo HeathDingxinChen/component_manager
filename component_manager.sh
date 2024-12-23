@@ -299,8 +299,6 @@ function install_zookeeper() {
         local zookeeper_url="https://downloads.apache.org/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
     fi
 
-
-
     echo "下载并安装 Zookeeper ${version}..."
     wget "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请检查版本号！"; return 1; }
 
