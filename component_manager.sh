@@ -7,14 +7,16 @@ INSTALL_DIR="/usr/local"
 KAFKA_DIR="$INSTALL_DIR/kafka"
 ZOOKEEPER_DIR="$INSTALL_DIR/zookeeper"
 JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
-
+# 配置 Kafka 和 Zookeeper 的地址和端口
+KAFKA_PORT="9092"
+ZOOKEEPER_PORT="2181"
 
 # 打印菜单
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v020475a"
-    echo "updateTime: 2024-12-24 01:39:02"
+    echo "version: vd876e4b"
+    echo "updateTime: 2024-12-24 01:43:08"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -22,7 +24,7 @@ function main_menu() {
     echo "4. 启动 Kafka 默认端口: 9092"
     echo "5. 停止 Zookeeper"
     echo "6. 停止 Kafka"
-    echo "7. 查看服务状态"
+    echo "7. 检查Kafka&Zookeeper状态"
     echo "8. 退出"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
@@ -230,7 +232,7 @@ function install_zookeep() {
     cat <<EOF | sudo tee $ZOOKEEPER_DIR/conf/zoo.cfg > /dev/null
 tickTime=2000
 dataDir=$ZOOKEEPER_DIR/data
-clientPort=2181
+clientPort=$ZOOKEEPER_PORT
 initLimit=5
 syncLimit=2
 EOF
@@ -276,7 +278,9 @@ log.dirs=$KAFKA_DIR/logs
 broker.id=0
 num.network.threads=3
 num.io.threads=8
-zookeeper.connect=localhost:2181
+zookeeper.connect=localhost:$ZOOKEEPER_PORT
+listeners=PLAINTEXT://0.0.0.0:$KAFKA_PORT
+advertised.listeners=PLAINTEXT://localhost:$KAFKA_PORT
 EOF
 
     echo "Kafka ${version} 安装完成！"
@@ -461,6 +465,54 @@ function stop_zookeeper_service() {
     fi
 }
 
+#!/bin/bash
+
+
+
+# 检查 Kafka 是否正常工作
+check_kafka() {
+    kafka_status=$(netstat -tuln | grep ":$KAFKA_PORT" | wc -l)
+    if [ "$kafka_status" -gt 0 ]; then
+        echo "Kafka is running on port $KAFKA_PORT"
+    else
+        echo "Kafka is not running on port $KAFKA_PORT"
+    fi
+}
+
+# 检查 Zookeeper 是否正常工作
+check_zookeeper() {
+    zookeeper_status=$(netstat -tuln | grep ":$ZOOKEEPER_PORT" | wc -l)
+    if [ "$zookeeper_status" -gt 0 ]; then
+        echo "Zookeeper is running on port $ZOOKEEPER_PORT"
+    else
+        echo "Zookeeper is not running on port $ZOOKEEPER_PORT"
+    fi
+}
+
+# 检查 Kafka 的可用性（通过 kafka-topics.sh）
+check_kafka_availability() {
+    kafka_topics=$(./bin/kafka-topics.sh --list --bootstrap-server $KAFKA_HOST:$KAFKA_PORT 2>&1)
+    if [[ $kafka_topics == *"Error"* ]]; then
+        echo "Kafka is not working properly"
+    else
+        echo "Kafka is running properly, available topics:"
+        echo "$kafka_topics"
+    fi
+}
+
+# 检查 Zookeeper 的可用性（通过 zkCli.sh）
+check_zookeeper_availability() {
+    zk_status=$(echo "stat" | ./bin/zkCli.sh -server $ZOOKEEPER_HOST:$ZOOKEEPER_PORT)
+    if [[ $zk_status == *"Mode"* ]]; then
+        echo "Zookeeper is running properly"
+    else
+        echo "Zookeeper is not running properly"
+    fi
+}
+
+
+
+
 
 # 启动 Kafka
 function start_kafka() {
@@ -635,6 +687,14 @@ function unregister_kafka_service() {
 
     echo "Kafka 服务已成功卸载！"
 }
+
+function check_kafka_and_zookeeper_status() {
+    check_kafka
+    check_zookeeper
+    check_kafka_availability
+    check_zookeeper_availability
+}
+
 
 function apt_update_and_install_util() {
     echo "更新apt..."
@@ -834,6 +894,7 @@ while true; do
     4) start_zookeeper ;;
     5) stop_zookeeper ;;
     6) stop_kafka ;;
+    7) check_kafka_and_zookeeper_status ;;
     8) exit 0 ;;
     *) echo "无效选项，请重试！" ;;
     esac
