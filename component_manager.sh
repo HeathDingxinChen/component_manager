@@ -15,8 +15,8 @@ ZOOKEEPER_PORT="2181"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v5f869c8"
-    echo "updateTime: 2024-12-24 02:06:20"
+    echo "version: v7d4efd1"
+    echo "updateTime: 2024-12-24 02:14:10"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -798,8 +798,13 @@ function show_system_info() {
     # 获取并显示当前用户名
     echo "当前用户名: $(whoami)"
 
-    # 获取并显示 IP 地址
-    echo "IP 地址: $(hostname -I)"
+    # 获取并显示 IP 地址（适用于 WSL）
+    wsl_ip=$(hostname -I | awk '{print $1}')
+    if [[ -z "$wsl_ip" ]]; then
+        # 如果没有获取到有效的 IP 地址，返回 localhost
+        wsl_ip="localhost"
+    fi
+    echo "本机 IP 地址: $wsl_ip"
 
     # 获取并显示操作系统信息
     echo "操作系统: $(uname -s)"
@@ -823,8 +828,6 @@ function show_system_info() {
     netstat -tuln
 }
 
-# 调用方法展示系统信息
-show_system_info
 
 
 
