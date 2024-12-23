@@ -15,8 +15,8 @@ ZOOKEEPER_PORT="2181"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: vab16457"
-    echo "updateTime: 2024-12-24 02:18:02"
+    echo "version: v68385d7"
+    echo "updateTime: 2024-12-24 02:24:57"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -124,7 +124,16 @@ function manager_zookeeper_menu() {
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
 }
+function show_components_info() {
+  echo "Kafka 默认安装地址: $KAFKA_DIR"
+  echo "Kafka 默认端口: $KAFKA_PORT"
 
+  echo "Zookeeper 默认安装地址: $ZOOKEEPER_DIR"
+  echo "Zookeeper 默认端口: $ZOOKEEPER_PORT"
+
+  echo "JDK 默认安装地址: $JAVA_HOME_PATH"
+
+}
 
 # 安装jdk11
 function install_jdk11() {
@@ -947,6 +956,7 @@ function check_env_loop() {
         read -r check_env_menu_choice
         case $check_env_menu_choice in
         1) show_system_info ;;
+        2) show_components_info ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
