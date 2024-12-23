@@ -15,12 +15,12 @@ ZOOKEEPER_PORT="2181"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v2fafded"
-    echo "updateTime: 2024-12-24 01:54:22"
+    echo "version: v1184297"
+    echo "updateTime: 2024-12-24 01:54:56"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
-    echo "3. 启动 Zookeeper 默认端口: 2182"
+    echo "3. 一键启动\停止"
     echo "4. 启动 Kafka 默认端口: 9092"
     echo "5. 停止 Zookeeper"
     echo "6. 停止 Kafka"
@@ -31,9 +31,11 @@ function main_menu() {
 }
 
 
+
+
 function config_menu() {
     echo "=========================="
-    echo "配置环境脚本"
+    echo "配置环境"
     echo "=========================="
     echo "1. 关闭防火墙"
     echo "2. 更新apt&安装常用工具"
@@ -42,9 +44,21 @@ function config_menu() {
     echo -n "请输入选项 [1-9]: "
 }
 
+function bootup_menu() {
+    echo "=========================="
+    echo "一键启动"
+    echo "=========================="
+    echo "1. 启动Kafka & Zookeeper"
+    echo "2. 关闭Kafka & Zookeeper"
+    echo "9. 返回上一级菜单"
+    echo "=========================="
+    echo -n "请输入选项 [1-9]: "
+}
+
+
 function manager_menu() {
     echo "=========================="
-    echo "管理脚本"
+    echo "管理组件"
     echo "=========================="
     echo "1. 管理JDK"
     echo "2. 管理Kafka"
@@ -380,13 +394,7 @@ function uninstall_zookeeper() {
     fi
 }
 
-# 启动 Zookeeper
-function start_zookeeper() {
-    echo "启动 Zookeeper..."
-    mkdir -p $ZOOKEEPER_DIR
-    nohup $KAFKA_DIR/bin/zookeeper-server-start.sh $KAFKA_DIR/config/zookeeper.properties > /tmp/zookeeper.log 2>&1 &
-    echo "Zookeeper 启动完成！"
-}
+
 function register_zookeeper_service() {
     echo "将 ZooKeeper 注册为系统服务并设置为开机自启..."
 
@@ -511,29 +519,27 @@ check_zookeeper_availability() {
 }
 
 
+function bootup_kafka_and_zookeeper() {
+    echo "启动 Zookeeper..."
+    mkdir -p $ZOOKEEPER_DIR
+    nohup $KAFKA_DIR/bin/zookeeper-server-start.sh $KAFKA_DIR/config/zookeeper.properties > /tmp/zookeeper.log 2>&1 &
+    echo "Zookeeper 启动完成！"
 
-
-
-# 启动 Kafka
-function start_kafka() {
     echo "启动 Kafka..."
     nohup $KAFKA_DIR/bin/kafka-server-start.sh $KAFKA_DIR/config/server.properties > /tmp/kafka.log 2>&1 &
     echo "Kafka 启动完成！"
 }
 
-# 停止 Zookeeper
-function stop_zookeeper() {
+function stop_kafka_and_zookeeper() {
     echo "停止 Zookeeper..."
     pkill -f "zookeeper-server-start"
     echo "Zookeeper 已停止！"
-}
 
-# 停止 Kafka
-function stop_kafka() {
     echo "停止 Kafka..."
     pkill -f "kafka-server-start"
     echo "Kafka 已停止！"
 }
+
 
 # 停止 Kafka
 function disable_firewall() {
@@ -726,18 +732,6 @@ function apt_update_and_install_util() {
 
 
 
-function enable_kafka_service() {
-    echo "启动 Kafka 服务..."
-    sudo systemctl start kafka
-    echo "Kafka 服务已启动！"
-}
-
-function disable_kafka_service() {
-    echo "停止 Kafka 服务..."
-    # 停止 Kafka 服务
-    sudo systemctl stop kafka
-    echo "Kafka 服务已成功停止！"
-}
 
 
 
@@ -796,7 +790,7 @@ function manager_menu_loop() {
         1) manager_jdk_menu_loop ;;
         2) manager_kafka_menu_loop ;;
         3) manager_zookeeper_menu_loop ;;
-        3) manager_docker_menu_loop ;;
+        4) manager_docker_menu_loop ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
@@ -872,8 +866,8 @@ function manager_docker_menu_loop() {
 function config_menu_loop() {
     while true; do
         config_menu
-        read -r config_choice
-        case $config_choice in
+        read -r config_menu_choice
+        case $config_menu_choice in
         1) disable_firewall ;;
         2) apt_update_and_install_util ;;
         9) return ;;  # 返回主菜单
@@ -882,12 +876,27 @@ function config_menu_loop() {
     done
 }
 
+function bootup_menu_loop() {
+    while true; do
+        bootup_menu
+        read -r bootup_menu_choice
+        case $bootup_menu_choice in
+        1) bootup_kafka_and_zookeeper ;;
+        2) stop_kafka_and_zookeeper ;;
+        3) check_kafka_and_zookeeper_status ;;
+        9) return ;;  # 返回主菜单
+        *) echo "无效选项，请重试！" ;;
+        esac
+    done
+}
+
+
 
 # 主菜单循环
 while true; do
     main_menu
-    read -r choice
-    case $choice in
+    read -r main_menu_choice
+    case $main_menu_choice in
     1) manager_menu_loop ;;
     2) config_menu_loop ;;
     3) start_kafka ;;
