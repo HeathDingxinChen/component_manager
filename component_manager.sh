@@ -8,6 +8,7 @@ KAFKA_DIR="$INSTALL_DIR/kafka"
 ZOOKEEPER_DIR="$INSTALL_DIR/zookeeper"
 JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 
+
 # 打印菜单
 function main_menu() {
     echo "=========================="
