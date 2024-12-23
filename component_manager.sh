@@ -12,7 +12,7 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 # 打印菜单
 function main_menu() {
     echo "=========================="
-    echo "组件管理脚本 v1.11 By Heath"
+    echo "组件管理脚本 v1.12 By Heath"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -293,7 +293,7 @@ function install_zookeeper() {
     # 设置下载 URL
     if [[ "$use_mirror" == "y" || "$use_mirror" == "Y" ]]; then
         # 使用国内镜像源（例如阿里云）
-        local zookeeper_url="https://mirrors.aliyun.com/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
+        local zookeeper_url="https://mirrors.aliyun.com/apache/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
     else
         # 使用官方下载地址
         local zookeeper_url="https://downloads.apache.org/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
