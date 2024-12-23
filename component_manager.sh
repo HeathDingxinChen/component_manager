@@ -32,8 +32,7 @@ function config_menu() {
     echo "配置环境脚本"
     echo "=========================="
     echo "1. 关闭防火墙"
-    echo "2. 更新包管理器"
-    echo "3. 安装iptables"
+    echo "2. 更新包管理器&安装常用工具"
     echo "9. 返回上一级菜单"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
@@ -635,17 +634,86 @@ function unregister_kafka_service() {
     echo "Kafka 服务已成功卸载！"
 }
 
-function apt_update() {
+function apt_update_and_install_util() {
     echo "更新包管理器..."
     sudo apt update
     echo "更新包管理器完毕！"
+
+    # 安装 iptables
+    read -p "是否安装 iptables (默认不安装, 输入 y 安装): " install_iptables
+    if [[ "$install_iptables" == "y" || "$install_iptables" == "Y" ]]; then
+        echo "安装iptables..."
+        sudo apt install iptables -y
+        echo "安装iptables完毕！"
+    else
+        echo "跳过安装iptables"
+    fi
+
+    # 安装 net-tools
+    read -p "是否安装 net-tools (默认不安装, 输入 y 安装): " install_net_tools
+    if [[ "$install_net_tools" == "y" || "$install_net_tools" == "Y" ]]; then
+        echo "安装net-tools..."
+        sudo apt install net-tools -y
+        echo "安装net-tools完毕！"
+    else
+        echo "跳过安装net-tools"
+    fi
+
+    # 安装 curl
+    read -p "是否安装 curl (默认不安装, 输入 y 安装): " install_curl
+    if [[ "$install_curl" == "y" || "$install_curl" == "Y" ]]; then
+        echo "安装curl..."
+        sudo apt install curl -y
+        echo "安装curl完毕！"
+    else
+        echo "跳过安装curl"
+    fi
+
+    # 安装 wget
+    read -p "是否安装 wget (默认不安装, 输入 y 安装): " install_wget
+    if [[ "$install_wget" == "y" || "$install_wget" == "Y" ]]; then
+        echo "安装wget..."
+        sudo apt install wget -y
+        echo "安装wget完毕！"
+    else
+        echo "跳过安装wget"
+    fi
+
+    # 安装 vim
+    read -p "是否安装 vim (默认不安装, 输入 y 安装): " install_vim
+    if [[ "$install_vim" == "y" || "$install_vim" == "Y" ]]; then
+        echo "安装vim..."
+        sudo apt install vim -y
+        echo "安装vim完毕！"
+    else
+        echo "跳过安装vim"
+    fi
+
+    # 安装 telnet
+    read -p "是否安装 telnet (默认不安装, 输入 y 安装): " install_telnet
+    if [[ "$install_telnet" == "y" || "$install_telnet" == "Y" ]]; then
+        echo "安装telnet..."
+        sudo apt install telnet -y
+        echo "安装telnet完毕！"
+    else
+        echo "跳过安装telnet"
+    fi
+
+    # 安装 htop
+    read -p "是否安装 htop (默认不安装, 输入 y 安装): " install_htop
+    if [[ "$install_htop" == "y" || "$install_htop" == "Y" ]]; then
+        echo "安装htop..."
+        sudo apt install htop -y
+    fi
+
+    # 安装 nmap
+    read -p "是否安装 nmap (默认不安装, 输入 y 安装): " install_htop
+    if [[ "$install_htop" == "y" || "$install_htop" == "Y" ]]; then
+        echo "安装htop..."
+        sudo apt install nmap -y
+    fi
 }
 
-function install_iptables() {
-    echo "更新包管理器..."
-    sudo apt install iptables -y
-    echo "更新包管理器完毕！"
-}
 
 
 
@@ -799,7 +867,6 @@ function config_menu_loop() {
         case config_choice in
         1) disable_firewall ;;
         2) apt_update ;;
-        3) install_iptables ;;
         9) return ;;  # 返回主菜单
         *) echo "无效选项，请重试！" ;;
         esac
