@@ -13,8 +13,8 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v849f6da"
-    echo "updateTime: "
+    echo "version: v2bba575"
+    echo "updateTime: 
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
