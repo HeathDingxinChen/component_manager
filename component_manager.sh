@@ -246,7 +246,20 @@ function install_kafka() {
     local version="3.9.0" # 默认版本
     read -p "请输入 Kafka 版本（默认 ${version}）：" input_version
     version=${input_version:-$version}
+
+    read -p "是否使用国内镜像源下载 Kafka？(y/n, 默认 y)：" use_mirror
+    use_mirror=${use_mirror:-y}
+
     local kafka_url="https://downloads.apache.org/kafka/${version}/kafka_2.13-${version}.tgz"
+
+    # 设置下载 URL
+    if [[ "$use_mirror" == "y" || "$use_mirror" == "Y" ]]; then
+        # 使用国内镜像源（例如阿里云）
+        local kafka_url="https://mirrors.aliyun.com/apache/kafka/${version}/kafka_2.13-${version}.tgz"
+    else
+        # 使用官方下载地址
+        local kafka_url="https://downloads.apache.org/kafka/${version}/kafka_2.13-${version}.tgz"
+    fi
 
     echo "下载并安装 Kafka ${version}..."
     wget "$kafka_url" -O kafka.tgz || { echo "下载失败，请到 https://downloads.apache.org/kafka 检查版本号！"; return 1; }
@@ -272,7 +285,21 @@ function install_zookeeper() {
     local version="3.8.4" # 默认版本
     read -p "请输入 Zookeeper 版本（默认 ${version}）：" input_version
     version=${input_version:-$version}
-    local zookeeper_url="https://downloads.apache.org/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
+
+    read -p "是否使用国内镜像源下载 Zookeeper？(y/n, 默认 y )：" use_mirror
+    use_mirror=${use_mirror:-y}
+
+
+    # 设置下载 URL
+    if [[ "$use_mirror" == "y" || "$use_mirror" == "Y" ]]; then
+        # 使用国内镜像源（例如阿里云）
+        local zookeeper_url="https://mirrors.aliyun.com/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
+    else
+        # 使用官方下载地址
+        local zookeeper_url="https://downloads.apache.org/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
+    fi
+
+
 
     echo "下载并安装 Zookeeper ${version}..."
     wget "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请检查版本号！"; return 1; }
