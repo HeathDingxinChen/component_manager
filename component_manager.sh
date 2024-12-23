@@ -262,7 +262,7 @@ function install_kafka() {
     fi
 
     echo "下载并安装 Kafka ${version}..."
-    wget "$kafka_url" -O kafka.tgz || { echo "下载失败，请到 https://downloads.apache.org/kafka 检查版本号！"; return 1; }
+    wget "$kafka_url" -O kafka.tgz || { echo "下载失败，请到 https://downloads.apache.org/kafka or https://mirrors.aliyun.com/apache/kafka 检查版本号！"; return 1; }
 
     sudo mkdir -p "$KAFKA_DIR"
     sudo tar -xvzf kafka.tgz -C "$KAFKA_DIR" --strip-components=1
@@ -282,7 +282,7 @@ EOF
 }
 
 function install_zookeeper() {
-    local version="3.8.4" # 默认版本
+    local version="3.9.3" # 默认版本
     read -p "请输入 Zookeeper 版本（默认 ${version}）：" input_version
     version=${input_version:-$version}
 
@@ -300,7 +300,7 @@ function install_zookeeper() {
     fi
 
     echo "下载并安装 Zookeeper ${version}..."
-    wget "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请检查版本号！"; return 1; }
+    wget "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请到 https://mirrors.aliyun.com/zookeeper/zookeeper or https://downloads.apache.org/zookeeper/zookeeper 检查版本号！"; return 1; }
 
     sudo mkdir -p "$ZOOKEEPER_DIR"
     sudo tar -xvzf zookeeper.tgz -C "$ZOOKEEPER_DIR" --strip-components=1
