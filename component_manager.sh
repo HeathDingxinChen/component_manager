@@ -766,7 +766,7 @@ function manager_kafka_menu_loop() {
     while true; do
         manager_kafka_menu
         read -r manager_kafka_menu_loop
-        case manager_kafka_menu_loop in
+        case $manager_kafka_menu_loop in
         1) install_kafka ;;
         2) uninstall_kafka ;;
         3) check_kafka_installed ;;
@@ -801,8 +801,8 @@ function manager_zookeeper_menu_loop() {
 function manager_docker_menu_loop() {
     while true; do
         manager_menu
-        read -r manager_zookeeper_menu_choice
-        case $manager_zookeeper_menu_choice in
+        read -r manager_docker_menu_choice
+        case $manager_docker_menu_choice in
         1) install_docker ;;
         2) uninstall_docker ;;
         3) check_docker_installed ;;
