@@ -249,7 +249,7 @@ function install_kafka() {
     local kafka_url="https://downloads.apache.org/kafka/${version}/kafka_2.13-${version}.tgz"
 
     echo "下载并安装 Kafka ${version}..."
-    wget -q "$kafka_url" -O kafka.tgz || { echo "下载失败，请到 https://downloads.apache.org/kafka 检查版本号！"; return 1; }
+    wget "$kafka_url" -O kafka.tgz || { echo "下载失败，请到 https://downloads.apache.org/kafka 检查版本号！"; return 1; }
 
     sudo mkdir -p "$KAFKA_DIR"
     sudo tar -xvzf kafka.tgz -C "$KAFKA_DIR" --strip-components=1
@@ -275,7 +275,7 @@ function install_zookeeper() {
     local zookeeper_url="https://downloads.apache.org/zookeeper/zookeeper-${version}/apache-zookeeper-${version}-bin.tar.gz"
 
     echo "下载并安装 Zookeeper ${version}..."
-    wget -q "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请检查版本号！"; return 1; }
+    wget "$zookeeper_url" -O zookeeper.tgz || { echo "下载失败，请检查版本号！"; return 1; }
 
     sudo mkdir -p "$ZOOKEEPER_DIR"
     sudo tar -xvzf zookeeper.tgz -C "$ZOOKEEPER_DIR" --strip-components=1
@@ -340,7 +340,7 @@ function install_zookeeper() {
 
 
     # 下载 Zookeeper
-    wget -q https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -O zookeeper.tgz
+    wget https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -O zookeeper.tgz
 
     if [ $? -ne 0 ]; then
         echo "下载 Zookeeper 失败！"
