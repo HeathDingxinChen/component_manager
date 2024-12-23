@@ -15,8 +15,8 @@ ZOOKEEPER_PORT="2181"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: vd3c5896"
-    echo "updateTime: 2024-12-24 02:32:33"
+    echo "version: v91fa231"
+    echo "updateTime: 2024-12-24 02:34:34"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -60,6 +60,7 @@ function check_env_menu() {
     echo "=========================="
     echo "1. 展示系统信息"
     echo "2. 展示组件信息"
+    echo "9. 返回上一级菜单"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
 }
@@ -973,7 +974,6 @@ while true; do
     2) config_menu_loop ;;
     3) bootup_menu_loop ;;
     4) check_env_loop ;;
-    8) wget --no-cache --timestamping https://gitee.com/HeathCHEN7/component_manager/raw/master/component_manager.sh && chmod +x component_manager.sh && sudo ./component_manager.sh & exit 0 ;;
     9) exit 0 ;;
     *) echo "无效选项，请重试！" ;;
     esac
