@@ -15,16 +15,13 @@ ZOOKEEPER_PORT="2181"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v1184297"
-    echo "updateTime: 2024-12-24 01:54:56"
+    echo "version: v5f869c8"
+    echo "updateTime: 2024-12-24 02:06:20"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
-    echo "3. 一键启动\停止"
-    echo "4. 启动 Kafka 默认端口: 9092"
-    echo "5. 停止 Zookeeper"
-    echo "6. 停止 Kafka"
-    echo "7. 检查Kafka&Zookeeper状态"
+    echo "3. 一键启动"
+    echo "4. 环境变量"
     echo "8. 退出"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
@@ -51,6 +48,16 @@ function bootup_menu() {
     echo "1. 启动Kafka & Zookeeper"
     echo "2. 关闭Kafka & Zookeeper"
     echo "9. 返回上一级菜单"
+    echo "=========================="
+    echo -n "请输入选项 [1-9]: "
+}
+
+function check_env_menu() {
+    echo "=========================="
+    echo "环境变量"
+    echo "=========================="
+    echo "1. 展示系统信息"
+    echo "2. 展示组件信息"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
 }
@@ -779,6 +786,45 @@ function check_docker_installed() {
     return 0
 }
 
+#!/bin/bash
+
+# 定义一个方法来展示环境信息
+function show_system_info() {
+    echo "=========== 系统环境信息 ==========="
+
+    # 获取并显示主机名
+    echo "主机名: $(hostname)"
+
+    # 获取并显示当前用户名
+    echo "当前用户名: $(whoami)"
+
+    # 获取并显示 IP 地址
+    echo "IP 地址: $(hostname -I)"
+
+    # 获取并显示操作系统信息
+    echo "操作系统: $(uname -s)"
+    echo "内核版本: $(uname -r)"
+
+    # 获取并显示 CPU 信息
+    echo "CPU 信息: $(lscpu | grep 'Model name')"
+
+    # 获取并显示内存信息
+    echo "内存信息: $(free -h)"
+
+    # 获取并显示磁盘使用情况
+    echo "磁盘使用情况:"
+    df -h
+
+    # 获取并显示当前时间
+    echo "当前时间: $(date)"
+
+    # 获取并显示网络连接状态
+    echo "网络连接状态:"
+    netstat -tuln
+}
+
+# 调用方法展示系统信息
+show_system_info
 
 
 
@@ -890,6 +936,17 @@ function bootup_menu_loop() {
     done
 }
 
+function check_env_loop() {
+    while true; do
+        check_env_menu
+        read -r check_env_menu_choice
+        case $check_env_menu_choice in
+        1) show_system_info ;;
+        9) return ;;  # 返回主菜单
+        *) echo "无效选项，请重试！" ;;
+        esac
+    done
+}
 
 
 # 主菜单循环
@@ -899,11 +956,8 @@ while true; do
     case $main_menu_choice in
     1) manager_menu_loop ;;
     2) config_menu_loop ;;
-    3) start_kafka ;;
-    4) start_zookeeper ;;
-    5) stop_zookeeper ;;
-    6) stop_kafka ;;
-    7) check_kafka_and_zookeeper_status ;;
+    3) bootup_menu_loop ;;
+    4) check_env_loop ;;
     8) exit 0 ;;
     *) echo "无效选项，请重试！" ;;
     esac
