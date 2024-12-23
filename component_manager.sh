@@ -12,7 +12,7 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 # 打印菜单
 function main_menu() {
     echo "=========================="
-    echo "组件管理脚本 v7bbf407 By Heath"
+    echo "组件管理脚本 version: v271d9dc By Heath"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
