@@ -13,8 +13,8 @@ JAVA_HOME_PATH="/usr/lib/jvm/java-11-openjdk-amd64"
 function main_menu() {
     echo "=========================="
     echo "组件管理脚本 By Heath"
-    echo "version: v1a6d353"
-    echo "updateTime: 2024-12-24 01:38:55"
+    echo "version: v020475a"
+    echo "updateTime: 2024-12-24 01:39:02"
     echo "=========================="
     echo "1. 管理组件"
     echo "2. 配置环境"
@@ -34,7 +34,7 @@ function config_menu() {
     echo "配置环境脚本"
     echo "=========================="
     echo "1. 关闭防火墙"
-    echo "2. 更新包管理器&安装常用工具"
+    echo "2. 更新apt&安装常用工具"
     echo "9. 返回上一级菜单"
     echo "=========================="
     echo -n "请输入选项 [1-9]: "
@@ -637,9 +637,9 @@ function unregister_kafka_service() {
 }
 
 function apt_update_and_install_util() {
-    echo "更新包管理器..."
+    echo "更新apt..."
     sudo apt update
-    echo "更新包管理器完毕！"
+    echo "更新apt！"
 
     # 定义安装包名的数组
     local packages=("iptables" "net-tools" "curl" "wget" "vim" "telnet" "htop" "nmap")
@@ -813,7 +813,7 @@ function config_menu_loop() {
     while true; do
         config_menu
         read -r config_choice
-        case config_choice in
+        case $config_choice in
         1) disable_firewall ;;
         2) apt_update_and_install_util ;;
         9) return ;;  # 返回主菜单
