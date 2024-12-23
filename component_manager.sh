@@ -339,7 +339,6 @@ function install_zookeeper() {
     # 设置 Zookeeper 版本
 
 
-
     # 下载 Zookeeper
     wget https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -O zookeeper.tgz
 
