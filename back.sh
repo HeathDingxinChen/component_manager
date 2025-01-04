@@ -570,7 +570,7 @@ check_kafka_availability() {
 }
 
 # 检查 Zookeeper 的可用性（通过 zkCli.sh）
-check_zookeeper_availability() {
+function check_zookeeper_availability() {
     zk_status=$(echo "stat" | ./bin/zkCli.sh -server $ZOOKEEPER_HOST:$ZOOKEEPER_PORT)
     if [[ $zk_status == *"Mode"* ]]; then
         echo "Zookeeper is running properly"

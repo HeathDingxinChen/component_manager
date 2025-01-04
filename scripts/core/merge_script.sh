@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义拆分的脚本文件列表
-SCRIPTS=("scripts/test/configure_files.sh" "scripts/test/install_dependencies.sh")
+SCRIPTS=("scripts/config/*.sh" "scripts/menu/*.sh")
 
 # 创建一个新的整合脚本文件
 OUTPUT_FILE="scripts/core/component_manager.sh"
@@ -21,5 +21,3 @@ chmod +x $OUTPUT_FILE
 # 将生成的文件添加到 Git 暂存区
 git add $OUTPUT_FILE
 
-# 检查 Git 暂存区的状态
-git status
