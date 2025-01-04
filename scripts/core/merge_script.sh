@@ -17,3 +17,9 @@ done
 
 # 赋予执行权限
 chmod +x $OUTPUT_FILE
+
+# 将生成的文件添加到 Git 暂存区
+git add $OUTPUT_FILE
+
+# 检查 Git 暂存区的状态
+git status
