@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # 定义拆分的脚本文件列表
-SCRIPTS=("install_dependencies.sh" "configure_files.sh")
+SCRIPTS=("scripts/test/configure_files.sh" "scripts/test/install_dependencies.sh")
 
 # 创建一个新的整合脚本文件
-OUTPUT_FILE="component_manager.sh"
+OUTPUT_FILE="scripts/core/component_manager.sh"
 > $OUTPUT_FILE  # 清空文件内容
 
 # 合并所有脚本
